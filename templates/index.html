@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWD Assistant - Accessible Information and Support</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --primary-dark: #1e293b;
+            --bg-light: #ffffff;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--primary-dark);
+            background-color: #f8fafc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--bg-light);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 20px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--primary-dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-blue);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* User Dropdown Styles */
+        #loginBtn {
+            list-style: none;
+        }
+
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-dropdown > span {
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: var(--bg-light);
+            min-width: 180px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            z-index: 1001;
+            border: 1px solid var(--border-light);
+            top: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: var(--primary-dark);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--border-light);
+            color: var(--primary-blue);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 80px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                        url('https://images.unsplash.com/photo-1543269865-cbe426189cc3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center 30%;
+            color: var(--bg-light);
+            height: 85vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            max-width: 650px;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .hero-content .highlight {
+            color: var(--primary-blue);
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+
+        .section-title p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--bg-light);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 40px 25px;
+            border-top: 5px solid var(--primary-blue);
+        }
+
+        .feature-card i {
+            font-size: 3.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary-dark);
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+        }
+
+        /* Animations */
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-dark);
+            color: var(--bg-light);
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Chatbot Styles */
+        #open-chatbot-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        #open-chatbot-btn:hover {
+            background: #1d4ed8;
+            transform: scale(1.1);
+        }
+
+        .chatbot-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 400px;
+            height: 600px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 1001;
+            overflow: hidden;
+        }
+
+        .chatbot-container.active {
+            display: flex;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #close-chatbot-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .bot-message {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 5px;
+            align-self: flex-start;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border-bottom-right-radius: 5px;
+            align-self: flex-end;
+        }
+
+        .chat-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chat-input input:focus {
+            border-color: #007bff;
+        }
+
+        .chat-input button {
+            padding: 12px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+
+        .quick-action-btn {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #495057;
+        }
+
+        .quick-action-btn:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+        }
+
+        .typing-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #666;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .chatbot-container {
+                width: 90vw;
+                height: 70vh;
+                right: 5vw;
+                bottom: 80px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Updated Header -->
+<header>
+    <div class="container">
+        <a href="/" class="logo">
+            <i class="fas fa-wheelchair-move"></i>
+            PWD Assistant
+        </a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="/home" class="active">Home</a></li>
+                <li><a href="/services">Services Hub</a></li>
+                <li><a href="/resources">Resources</a></li>
+                <li><a href="/community">Community</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            {% if user %}
+            <a href="/" class="btn btn-secondary" style="margin-right: 10px;">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <div class="user-dropdown">
+                <span>👤 {{ user.fullname if user.fullname else user.username }}</span>
+                <div class="dropdown-content">
+                    <a href="/profile"><i class="fas fa-user-circle"></i> Profile</a>
+                    <a href="/home"><i class="fas fa-home"></i> Dashboard</a>
+                    <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+            {% else %}
+            <a href="/" class="btn btn-secondary" style="margin-right: 10px;">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="/login" class="btn btn-secondary">Login/Signup</a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content fade-in-up">
+                    <h1>Empowering Through <span class="highlight">Accessibility</span> and Information</h1>
+                    <p>Your centralized platform for discovering services, government schemes, and a supportive community for Persons with Disabilities.</p>
+                    <a href="/services" class="btn btn-primary">
+                        Explore Services Now <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Our Core Initiatives</h2>
+                    <p>Designed to break down barriers and foster inclusion.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card card fade-in-up" style="animation-delay: 0.2s;">
+                        <i class="fas fa-database"></i>
+                        <h3>Centralized Schemes</h3>
+                        <p>Consolidated, verified information on all state and national benefit programs.</p>
+                    </div>
+                    <div class="feature-card card fade-in-up" style="animation-delay: 0.4s;">
+                        <i class="fas fa-search-location"></i>
+                        <h3>Location-Based Services</h3>
+                        <p>Find accessible facilities nearby, customized to your mobility and needs.</p>
+                    </div>
+                    <div class="feature-card card fade-in-up" style="animation-delay: 0.6s;">
+                        <i class="fas fa-universal-access"></i>
+                        <h3>Full Accessibility</h3>
+                        <p>Features supporting voice input, text-to-speech, and screen readers for all users.</p>
+                    </div>
+                    <div class="feature-card card fade-in-up" style="animation-delay: 0.8s;">
+                        <i class="fas fa-robot"></i>
+                        <h3>AI Chatbot Support</h3>
+                        <p>Get instant, multilingual guidance for your queries and application processes.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Chatbot Button and Container -->
+    <button id="open-chatbot-btn">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <div class="chatbot-container" id="chatbot-container">
+        <div class="chat-header">
+            <h3><i class="fas fa-robot"></i> PWD Assistant</h3>
+            <button id="close-chatbot-btn">×</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <!-- Messages will be inserted here by JavaScript -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chat-input-field" placeholder="Ask about disability definitions, reservations, certificates..." autocomplete="off">
+            <button type="button" id="send-message-btn">Send</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <a href="/home" class="logo" style="color: var(--bg-light);">
+                    <i class="fas fa-wheelchair-move"></i>
+                    PWD Assistant
+                </a>
+                <p>&copy; 2025 PWD Assistant. A project by MIT Academy of Engineering.</p>
+                <a href="/about" class="btn btn-secondary" style="color: var(--primary-blue); border-color: var(--primary-blue);">Project Details</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Chatbot functionality
+        const chatbotContainer = document.getElementById('chatbot-container');
+        const openChatbotBtn = document.getElementById('open-chatbot-btn');
+        const closeChatbotBtn = document.getElementById('close-chatbot-btn');
+        const chatBody = document.getElementById('chat-body');
+        const chatInput = document.getElementById('chat-input-field');
+        const sendMessageBtn = document.getElementById('send-message-btn');
+
+        // Official PwD FAQ Knowledge Base from Government PDF
+        const knowledgeBase = {
+            "disability_definitions": {
+                "title": "Disability Definitions - Official Categories",
+                "content": `**Official Disability Categories as per Government Guidelines:**
+
+**1. Blindness:**
+• Visual acuity not exceeding 6/60 or 20/200 (Snellen) in the better eye with correcting lenses
+• Limitation of the field of vision subtending an angle of 20 degree or worse
+
+**2. Low Vision:**
+• Impairment of visual functioning even after treatment or standard refractive correction
+• Person uses or is potentially capable of using vision with appropriate assistive device
+
+**3. Hearing Impairment:**
+• Loss of sixty decibels or more in the better ear in the conversational range of frequencies
+
+**4. Locomotor Disability:**
+• Disability of the bones, joints or muscles leading to substantial restriction of movement of limbs
+• Includes any form of cerebral palsy
+
+**5. Cerebral Palsy:**
+• Group of non-progressive conditions characterized by abnormal motor control posture
+• Results from brain insult or injuries occurring in pre-natal, peri-natal or infant period
+
+**Note:** All orthopedically handicapped persons are covered under "locomotor disability or cerebral palsy"`,
+                "category": "definitions",
+                "source": "Government of India - PwD FAQ",
+                "pdf_reference": "Pages 2-3: Official disability definitions"
+            },
+
+            "reservation_eligibility": {
+                "title": "Reservation Eligibility - 40% Disability Requirement",
+                "content": `**Eligibility Criteria for Government Job Reservation:**
+
+**Minimum Disability Requirement:**
+• **Not less than 40% of relevant disability** required
+• Applies to all Central Government services/posts
+
+**Documentation Required:**
+• Valid Disability Certificate issued by competent authority
+• Certificate must be from a Government-constituted Medical Board
+
+**Medical Board Composition:**
+• At least three members including one specialist in the particular field
+• Boards constituted by Central or State Government
+
+**Certificate Validity:**
+• Permanent disability certificates for conditions with no chance of variation
+• Time-bound certificates where disability degree may vary
+• Right to hearing before refusal of certificate`,
+                "category": "reservation",
+                "source": "Government of India - PwD FAQ Q.4 & Q.5",
+                "pdf_reference": "Page 3: Q.4 & Q.5 - Disability percentage and certificate authority"
+            },
+
+            "job_identification": {
+                "title": "Job Identification for PwD Reservation",
+                "content": `**Jobs/Posts Identification Process:**
+
+**Responsible Authority:**
+• Ministry of Social Justice and Empowerment identifies suitable jobs/posts
+• Initial notification dated 31.5.2001 (No. 16-25/99.NI.I)
+
+**Key Provisions:**
+• List is not exhaustive - Ministries can identify additional posts
+• No Ministry/Department can exclude identified posts from reservation
+• If post shifts between groups/grades, it remains identified
+
+**Category-specific Reservation:**
+• Posts identified for specific disability categories reserved only for those categories
+• 3% reservation maintained separately for each category
+• Equal distribution between categories where possible`,
+                "category": "employment",
+                "source": "Government of India - PwD FAQ Q.6",
+                "pdf_reference": "Pages 3-4: Q.6 - Job identification process"
+            },
+
+            "own_merit": {
+                "title": "Own Merit Candidates - Special Provision",
+                "content": `**Own Merit Candidate Definition:**
+
+**Key Concept:**
+• Persons with disabilities selected **without relaxed standards**
+• Selected through general competition along with other candidates
+• **Not adjusted against reserved quota**
+
+**Application:**
+• Applies to both direct recruitment and promotion
+• Reserved vacancies filled separately from eligible PwD candidates
+• Relaxed standards may apply for filling reserved quota only
+
+**Purpose:**
+• Prevents discrimination against meritorious PwD candidates
+• Ensures genuine reservation benefits reach intended beneficiaries
+• Maintains merit while ensuring adequate representation`,
+                "category": "reservation",
+                "source": "Government of India - PwD FAQ Q.8",
+                "pdf_reference": "Page 5: Q.8 - Own merit candidate definition"
+            }
+        };
+
+        // Keyword mapping for better matching
+        const keywordMapping = {
+            'blind': 'disability_definitions', 'blindness': 'disability_definitions',
+            'vision': 'disability_definitions', 'visual': 'disability_definitions',
+            'low vision': 'disability_definitions', 'hearing': 'disability_definitions',
+            'deaf': 'disability_definitions', 'locomotor': 'disability_definitions',
+            'cerebral palsy': 'disability_definitions', 'orthopedic': 'disability_definitions',
+            'reservation': 'reservation_eligibility', 'reserve': 'reservation_eligibility',
+            'quota': 'reservation_eligibility', 'percentage': 'reservation_eligibility',
+            '40%': 'reservation_eligibility', 'eligibility': 'reservation_eligibility',
+            'job': 'job_identification', 'posts': 'job_identification',
+            'identification': 'job_identification', 'suitable': 'job_identification',
+            'merit': 'own_merit', 'own merit': 'own_merit',
+            'general category': 'own_merit', 'without relaxation': 'own_merit'
+        };
+
+        // Toggle chatbot visibility
+        openChatbotBtn.addEventListener('click', () => {
+            chatbotContainer.classList.add('active');
+            if (chatBody.children.length === 0) {
+                showWelcomeMessage();
+            }
+        });
+
+        closeChatbotBtn.addEventListener('click', () => {
+            chatbotContainer.classList.remove('active');
+        });
+
+        // Send message function
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message === '') return;
+
+            // Add user message
+            addMessage(message, 'user');
+            chatInput.value = '';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Generate and show bot response after delay
+            setTimeout(() => {
+                removeTypingIndicator();
+                const response = generateResponse(message);
+                displayFormattedResponse(response);
+                addQuickActions();
+            }, 1000);
+        }
+
+        // Send message on button click or Enter key
+        sendMessageBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function showWelcomeMessage() {
+            const welcomeMessage = `**Welcome to PWD Assistant!** 🇮🇳
+
+I provide accurate information based on the **Official Government FAQ for Persons with Disabilities**. 
+
+🔍 **I can help you with:**
+• Disability definitions and categories
+• Reservation eligibility criteria  
+• Disability certificate process
+• Job identification guidelines
+• Age relaxation and benefits
+• Reservation computation methods
+• Own merit candidate provisions
+
+Ask me anything about PwD rights and reservations!`;
+            
+            addMessage(welcomeMessage, 'bot');
+            addQuickActions();
+        }
+
+        function addMessage(content, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}-message`;
+            
+            // Convert markdown-like formatting to HTML
+            let formattedContent = content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>')
+                .replace(/•(.*?)(?=\n|$)/g, '<div style="margin: 5px 0; padding-left: 15px;">• $1</div>');
+            
+            messageDiv.innerHTML = formattedContent;
+            chatBody.appendChild(messageDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chat-message bot-message';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    Assistant is typing
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            chatBody.appendChild(typingDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function generateResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            // Check keyword mappings first
+            for (const [keyword, responseKey] of Object.entries(keywordMapping)) {
+                if (lowerMessage.includes(keyword) && knowledgeBase[responseKey]) {
+                    return knowledgeBase[responseKey];
+                }
+            }
+
+            // Check direct matches
+            for (const key in knowledgeBase) {
+                const keywords = key.split('_');
+                if (keywords.some(keyword => lowerMessage.includes(keyword))) {
+                    return knowledgeBase[key];
+                }
+            }
+
+            // Default response
+            return {
+                title: "How can I help you?",
+                content: "I specialize in the Official Government FAQ for Persons with Disabilities. You can ask me about:\n\n• Disability definitions and categories\n• Reservation eligibility (40% requirement)\n• Disability certificate process\n• Job identification\n• Own merit candidates\n\nTry using the quick action buttons below for specific topics!",
+                category: "general",
+                source: "Government of India - PwD FAQ",
+                pdf_reference: "Complete FAQ Document"
+            };
+        }
+
+        function displayFormattedResponse(responseData) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message bot-message';
+            
+            let content = `
+                <div style="margin-bottom: 10px;">
+                    <strong>${responseData.title}</strong>
+                    <span class="category-tag">${responseData.category}</span>
+                </div>
+                <div class="info-card">
+                    ${formatContent(responseData.content)}
+                </div>
+                <div class="pdf-reference">
+                    📄 <strong>Source:</strong> ${responseData.source}<br>
+                    📖 <strong>Reference:</strong> ${responseData.pdf_reference}
+                </div>
+            `;
+            
+            messageDiv.innerHTML = content;
+            chatBody.appendChild(messageDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function formatContent(content) {
+            return content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>')
+                .replace(/•(.*?)(?=\n|$)/g, '<div style="margin: 8px 0; padding-left: 15px;">• $1</div>');
+        }
+
+        function addQuickActions() {
+            const quickActionsDiv = document.createElement('div');
+            quickActionsDiv.className = 'quick-actions';
+            
+            const actions = [
+                'Disability Definitions',
+                'Reservation Eligibility', 
+                'Job Identification',
+                'Own Merit'
+            ];
+            
+            actions.forEach(action => {
+                const button = document.createElement('button');
+                button.className = 'quick-action-btn';
+                button.textContent = action;
+                button.onclick = () => {
+                    chatInput.value = action;
+                    sendMessage();
+                };
+                quickActionsDiv.appendChild(button);
+            });
+            
+            chatBody.appendChild(quickActionsDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // Initialize chatbot with welcome message when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Welcome message will show when chatbot is opened
+        });
+    </script>
+</body>
+</html>

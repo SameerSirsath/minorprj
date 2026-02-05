@@ -1,0 +1,401 @@
+/* PWD Assistant - Professional Branding Stylesheet */
+/* Color Palette:
+    - Primary Dark: #121212 (backgrounds, footers, headers)
+    - Primary Blue: #03A9F4 (accents, links, highlights)
+    - Accent Orange: #FF9800 (call-to-action buttons)
+    - Text Light: #E0E0E0 (text on dark backgrounds)
+    - Text Dark: #212121 (primary text on light backgrounds)
+    - Light Background: #FFFFFF
+    - Subtle Borders: #EEEEEE
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --primary-dark: #121212;
+    --primary-blue: #03A9F4;
+    --primary-blue-light: #4FC3F7;
+    --accent-orange: #FF9800;
+    --accent-orange-dark: #E65100;
+    --text-light: #E0E0E0;
+    --text-dark: #212121;
+    --text-muted: #757575;
+    --bg-light: #FFFFFF;
+    --bg-grey: #f5f5f5;
+    --border-color: #EEEEEE;
+    --spacing-unit: 20px;
+    --border-radius: 12px;
+    --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-unit);
+}
+
+/* --- Header & Navigation --- */
+header {
+    background-color: var(--primary-dark);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--primary-blue);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo i {
+    font-size: 1.6rem;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 35px;
+}
+
+.nav-links a {
+    color: var(--text-light);
+    text-decoration: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    padding-bottom: 5px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.3s, border-color 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--primary-blue);
+    border-bottom-color: var(--primary-blue);
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+/* --- Buttons --- */
+.btn {
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: var(--accent-orange);
+    color: var(--primary-dark);
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-orange-dark);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 152, 0, 0.5);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--text-light);
+    border-color: var(--text-light);
+}
+
+.btn-secondary:hover {
+    background-color: var(--primary-blue);
+    color: var(--bg-light);
+    border-color: var(--primary-blue);
+}
+
+/* --- Forms --- */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 4px rgba(3, 169, 244, 0.2);
+}
+
+/* --- Footer --- */
+footer {
+    background-color: var(--primary-dark);
+    color: var(--text-light);
+    padding: 50px 0;
+    margin-top: 60px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer-content .logo {
+    margin-bottom: 10px;
+}
+
+/* --- General Page Styling --- */
+.page-header {
+    text-align: center;
+    padding: 60px 0;
+    background-color: var(--bg-grey);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 50px;
+}
+
+.page-header h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+    margin-bottom: 10px;
+}
+
+.page-header p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* --- Card Styling --- */
+.card {
+    background-color: var(--bg-light);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    padding: 30px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* --- Animation Utilities --- */
+.fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 1024px) {
+    .nav-links {
+        display: none; /* Or implement a hamburger menu */
+    }
+    .page-header h1 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 15px;
+    }
+    header .container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .btn {
+        padding: 12px 25px;
+    }
+}
+/* --- Chatbot Styles --- */
+#open-chatbot-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    z-index: 999;
+    transition: transform 0.3s ease;
+}
+
+#open-chatbot-btn:hover {
+    transform: scale(1.1);
+}
+
+.chatbot-container {
+    position: fixed;
+    bottom: 100px;
+    right: 25px;
+    width: 400px; /* Increased from 350px */
+    max-height: 550px; /* Increased from 500px */
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.chat-header {
+    background: var(--primary-dark);
+    color: var(--primary-blue);
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+#close-chatbot-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.chat-body {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: var(--bg-grey);
+}
+
+.chat-message {
+    margin-bottom: 15px;
+    max-width: 85%;
+}
+
+.chat-message p {
+    padding: 12px;
+    border-radius: 10px;
+    line-height: 1.5;
+}
+
+.bot-message {
+    align-self: flex-start;
+}
+
+.bot-message p {
+    background: #E0E0E0;
+    color: var(--text-dark);
+}
+
+.user-message {
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+.user-message p {
+    background: var(--primary-blue);
+    color: white;
+}
+
+.chat-input {
+    display: flex;
+    border-top: 1px solid var(--border-color);
+}
+
+.chat-input input {
+    flex-grow: 1;
+    border: none;
+    padding: 15px;
+    font-size: 1rem;
+}
+
+.chat-input input:focus {
+    outline: none;
+}
+
+.chat-input button {
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 0 20px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+}

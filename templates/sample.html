@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Dashboard - Student Management</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Simple transition for modal */
+        .modal {
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        .modal-content {
+            transition: transform 0.25s ease;
+        }
+
+        /* Hide scrollbar for file input */
+        input[type="file"]::-webkit-file-upload-button {
+            display: none;
+        }
+        input[type="file"] {
+            color: transparent;
+        }
+
+        /* Custom file input button */
+        .file-input-label {
+            cursor: pointer;
+        }
+
+        /* Custom Toast Message */
+        #message-box {
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
+
+        /* ---------- Header + Nav (from your snippet) ---------- */
+        header {
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        header .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2563eb;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        nav .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 500;
+            color: #1f2937; /* gray-800 */
+            transition: color 0.2s, border-color 0.2s;
+            padding-bottom: 2px;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .nav-links a.active {
+            color: #2563eb;
+            border-color: #2563eb;
+        }
+
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #2563eb;
+            border-color: #2563eb;
+        }
+
+        .btn-secondary:hover {
+            background: #2563eb;
+            color: white;
+        }
+
+        /* User dropdown */
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .user-dropdown > span {
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            background: #f3f4f6;
+            cursor: pointer;
+            font-weight: 600;
+            color: #111827;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            margin-top: 0.5rem;
+            background-color: #ffffff;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            z-index: 50;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            font-size: 0.9rem;
+            color: #374151;
+            white-space: nowrap;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            header .container {
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                height: auto;
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+            }
+            nav .nav-links {
+                gap: 0.75rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Main Dashboard Container -->
+    <div id="dashboard-container" class="min-h-screen">
+
+        <!-- Updated Header (your structure) -->
+        <header>
+    <div class="container">
+        <a href="/" class="logo">
+            <i class="fas fa-wheelchair-move"></i>
+            PWD Assistant - NGO Dashboard
+        </a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="/sample" class="active">Dashboard</a></li>
+                <li><a href="/ngo/analyze">Analyze</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            {% if user and user.user_type == 'ngo' %}
+            <a href="/" class="btn btn-secondary" style="margin-right: 10px;">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <div class="user-dropdown">
+                <span>🏢 {{ user.fullname if user.fullname else 'NGO Manager' }}</span>
+                <div class="dropdown-content">
+                    <a href="/profile"><i class="fas fa-user-circle"></i> Profile</a>
+                    <a href="/ngo/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+            {% else %}
+            <a href="/" class="btn btn-secondary" style="margin-right: 10px;">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="/login" class="btn btn-secondary">Login</a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-gray-900">Student Management</h1>
+                <div class="flex space-x-3">
+                    <a href="/ngo/analyze" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm flex items-center">
+                        <i class="fas fa-bolt mr-2"></i>
+                        Direct Analyze
+                    </a>
+                    <button id="open-add-modal-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm flex items-center">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add New Student
+                    </button>
+                </div>
+            </div>
+
+            <!-- Student Table -->
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Age</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Disability Type</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certificate</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Loading state -->
+                            <tr id="table-loading-state" class="hidden">
+                                <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                                    <i class="fas fa-spinner fa-spin text-2xl"></i>
+                                    <p class="mt-2">Loading students...</p>
+                                </td>
+                            </tr>
+                            <!-- Empty state -->
+                            <tr id="table-empty-state" class="hidden">
+                                <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                                    No students found. Add one to get started!
+                                </td>
+                            </tr>
+                            <!-- Student rows will be injected here by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div id="add-student-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 invisible opacity-0">
+        <div class="modal-content bg-white p-6 rounded-lg shadow-xl w-full max-w-md transform -translate-y-10">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Add New Student</h2>
+                <button class="close-modal-button text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <form id="add-student-form">
+                <div class="mb-4">
+                    <label for="add-student-name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                    <input type="text" id="add-student-name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="mb-4">
+                    <label for="add-student-age" class="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                    <input type="number" id="add-student-age" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Certificate</label>
+                    <label class="file-input-label w-full flex items-center px-3 py-2 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-50">
+                        <span class="bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-medium px-3 py-1 rounded-md">Choose File</span>
+                        <span id="add-file-name" class="ml-3 text-sm text-gray-600 truncate">No file selected...</span>
+                        <input type="file" id="add-student-certificate" class="hidden">
+                    </label>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" class="close-modal-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg">Cancel</button>
+                    <button type="submit" id="add-student-submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center w-28">
+                        <span class="btn-text">Save</span>
+                        <i class="fas fa-spinner fa-spin btn-spinner hidden"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div id="edit-student-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 invisible opacity-0">
+        <div class="modal-content bg-white p-6 rounded-lg shadow-xl w-full max-w-md transform -translate-y-10">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Edit Student</h2>
+                <button class="close-modal-button text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <form id="edit-student-form" data-doc-id="">
+                <div class="mb-4">
+                    <label for="edit-student-name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                    <input type="text" id="edit-student-name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="mb-4">
+                    <label for="edit-student-age" class="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                    <input type="number" id="edit-student-age" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Certificate</label>
+                    <label class="file-input-label w-full flex items-center px-3 py-2 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-50">
+                        <span class="bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-medium px-3 py-1 rounded-md">Change File</span>
+                        <span id="edit-file-name" class="ml-3 text-sm text-gray-600 truncate"></span>
+                        <input type="file" id="edit-student-certificate" class="hidden">
+                    </label>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" class="close-modal-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg">Cancel</button>
+                    <button type="submit" id="edit-student-submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center w-28">
+                        <span class="btn-text">Update</span>
+                        <i class="fas fa-spinner fa-spin btn-spinner hidden"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message Box / Toast -->
+    <div id="message-box" class="fixed top-5 right-5 z-[100] p-4 rounded-lg shadow-lg max-w-sm text-white transform translate-x-[150%] opacity-0">
+        <span id="message-text"></span>
+    </div>
+
+    <!-- Local JavaScript -->
+    <script>
+        // Wait for the DOM to be fully loaded before running scripts
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Local Data Store ---
+            let students = [
+                {
+                    id: 1,
+                    name: "Alex Johnson",
+                    age: 12,
+                    disabilityType: "Type A (Visual)",
+                    certificateFile: "alex_cert.pdf",
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 2,
+                    name: "Maria Garcia",
+                    age: 10,
+                    disabilityType: null,
+                    certificateFile: "maria_g.pdf",
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 3,
+                    name: "Chen Wei",
+                    age: 14,
+                    disabilityType: "Type C (Hearing)",
+                    certificateFile: "wei_report.pdf",
+                    createdAt: new Date().toISOString()
+                }
+            ];
+
+            // --- DOM Elements ---
+            const dashboardContainer = document.getElementById('dashboard-container');
+            
+            // Modals
+            const addModal = document.getElementById('add-student-modal');
+            const editModal = document.getElementById('edit-student-modal');
+            const openAddModalButton = document.getElementById('open-add-modal-button');
+            
+            // Forms
+            const addForm = document.getElementById('add-student-form');
+            const editForm = document.getElementById('edit-student-form');
+            
+            // File Inputs
+            const addFileInput = document.getElementById('add-student-certificate');
+            const addFileName = document.getElementById('add-file-name');
+            const editFileInput = document.getElementById('edit-student-certificate');
+            const editFileName = document.getElementById('edit-file-name');
+
+            // Table
+            const tableBody = document.getElementById('student-table-body');
+            const loadingState = document.getElementById('table-loading-state');
+            const emptyState = document.getElementById('table-empty-state');
+            
+            // Message Box
+            const messageBox = document.getElementById('message-box');
+            const messageText = document.getElementById('message-text');
+            let messageTimer;
+
+            // --- Modal Logic ---
+            const allModals = document.querySelectorAll('.modal');
+            const closeButtons = document.querySelectorAll('.close-modal-button');
+
+            function openModal(modal) {
+                modal.classList.remove('invisible', 'opacity-0');
+                modal.querySelector('.modal-content').classList.remove('-translate-y-10');
+            }
+
+            function closeModal(modal) {
+                modal.classList.add('invisible', 'opacity-0');
+                modal.querySelector('.modal-content').classList.add('-translate-y-10');
+            }
+
+            openAddModalButton.addEventListener('click', () => {
+                addForm.reset();
+                addFileName.textContent = "No file selected...";
+                openModal(addModal);
+            });
+
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    closeModal(button.closest('.modal'));
+                });
+            });
+
+            allModals.forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closeModal(modal);
+                    }
+                });
+            });
+            
+            // --- File Input UI Logic ---
+            addFileInput.addEventListener('change', () => {
+                addFileName.textContent = addFileInput.files[0] ? addFileInput.files[0].name : "No file selected...";
+            });
+            editFileInput.addEventListener('change', () => {
+                editFileName.textContent = editFileInput.files[0] ? editFileInput.files[0].name : "No file selected...";
+            });
+
+            // --- Message Box Logic ---
+            function showMessage(message, type = 'success') {
+                clearTimeout(messageTimer);
+                messageText.textContent = message;
+
+                // Reset classes
+                messageBox.classList.remove('bg-green-500', 'bg-red-500', 'bg-blue-500', 'translate-x-[150%]%', 'opacity-0');
+
+                if (type === 'error') {
+                    messageBox.classList.add('bg-red-500');
+                } else if (type === 'info') {
+                    messageBox.classList.add('bg-blue-500');
+                } else {
+                    messageBox.classList.add('bg-green-500');
+                }
+
+                // Animate in
+                messageBox.classList.remove('translate-x-[150%]', 'opacity-0');
+                
+                // Auto-hide
+                messageTimer = setTimeout(() => {
+                    messageBox.classList.add('translate-x-[150%]', 'opacity-0');
+                }, 3000);
+            }
+
+            // --- Button Spinner Logic ---
+            function setButtonLoading(button, isLoading) {
+                const text = button.querySelector('.btn-text');
+                const spinner = button.querySelector('.btn-spinner');
+                if (isLoading) {
+                    text.classList.add('hidden');
+                    spinner.classList.remove('hidden');
+                    button.disabled = true;
+                } else {
+                    text.classList.remove('hidden');
+                    spinner.classList.add('hidden');
+                    button.disabled = false;
+                }
+            }
+
+            // --- Student Data (CRUD) ---
+
+            /**
+             * Clears the table and re-renders it from the local 'students' array.
+             */
+            function renderTable() {
+                loadingState.classList.add('hidden');
+                tableBody.innerHTML = ''; // Clear table body
+                
+                if (students.length === 0) {
+                    tableBody.appendChild(emptyState);
+                    emptyState.classList.remove('hidden');
+                    return;
+                }
+
+                emptyState.classList.add('hidden');
+                
+                // Sort by name (case-insensitive)
+                const sortedStudents = [...students].sort((a, b) => {
+                    const nameA = a.name.toLowerCase();
+                    const nameB = b.name.toLowerCase();
+                    if (nameA < nameB) return -1;
+                    if (nameA > nameB) return 1;
+                    return 0;
+                });
+
+                sortedStudents.forEach(student => {
+                    renderStudentRow(student);
+                });
+            }
+
+            /**
+             * Renders a single student row in the table.
+             * @param {object} student - The student object from the local array.
+             */
+            function renderStudentRow(student) {
+                const tr = document.createElement('tr');
+                tr.classList.add('hover:bg-gray-50');
+                tr.dataset.id = student.id; // Add id to the row
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${student.name || 'N/A'}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-700">${student.age || 'N/A'}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${student.disabilityType ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}">
+                            ${student.disabilityType || 'Not Analyzed'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 truncate max-w-xs">
+                        ${student.certificateFile || 'None'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                        <button class="analyze-btn text-blue-600 hover:text-blue-900" title="Analyze">
+                            <i class="fas fa-magic"></i>
+                            <i class="fas fa-spinner fa-spin hidden"></i>
+                        </button>
+                        <button class="edit-btn text-indigo-600 hover:text-indigo-900" title="Edit">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                        <button class="delete-btn text-red-600 hover:text-red-900" title="Delete">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+
+                // Add event listeners to the new buttons
+                tr.querySelector('.analyze-btn').addEventListener('click', (e) => handleAnalyze(e, student.id));
+                tr.querySelector('.edit-btn').addEventListener('click', () => handleEdit(student));
+                tr.querySelector('.delete-btn').addEventListener('click', () => handleDelete(student.id));
+
+                tableBody.appendChild(tr);
+            }
+
+            // --- Add Student ---
+            addForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitButton = document.getElementById('add-student-submit');
+                setButtonLoading(submitButton, true);
+
+                const name = document.getElementById('add-student-name').value;
+                const age = document.getElementById('add-student-age').value;
+                const file = addFileInput.files[0];
+                const certificateFile = file ? file.name : null;
+
+                // Simulate save
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                const newStudent = {
+                    id: Date.now(), // Simple unique ID
+                    name,
+                    age: Number(age),
+                    certificateFile,
+                    disabilityType: null, // Default
+                    createdAt: new Date().toISOString()
+                };
+                
+                students.push(newStudent);
+                renderTable(); // Re-render the table
+                
+                showMessage("Student added successfully!", "success");
+                closeModal(addModal);
+                addForm.reset();
+                addFileName.textContent = "No file selected...";
+                
+                setButtonLoading(submitButton, false);
+            });
+
+            // --- Edit Student ---
+            function handleEdit(student) {
+                // Populate modal
+                editForm.dataset.docId = student.id; // Store the ID on the form
+                document.getElementById('edit-student-name').value = student.name;
+                document.getElementById('edit-student-age').value = student.age;
+                editFileName.textContent = student.certificateFile || "No file selected...";
+                editFileInput.value = ''; // Reset file input
+
+                // Store original filename in case it's not changed
+                editForm.dataset.originalFile = student.certificateFile || "";
+
+                openModal(editModal);
+            }
+
+            editForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitButton = document.getElementById('edit-student-submit');
+                setButtonLoading(submitButton, true);
+
+                const docId = Number(editForm.dataset.docId);
+                const name = document.getElementById('edit-student-name').value;
+                const age = document.getElementById('edit-student-age').value;
+                const file = editFileInput.files[0];
+                
+                // Use new file name if one is selected, otherwise keep original
+                const certificateFile = file ? file.name : editForm.dataset.originalFile;
+
+                // Simulate save
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Find and update the student in the local array
+                const studentIndex = students.findIndex(s => s.id === docId);
+                if (studentIndex > -1) {
+                    students[studentIndex] = {
+                        ...students[studentIndex], // Keep old properties
+                        name,
+                        age: Number(age),
+                        certificateFile
+                    };
+                }
+                
+                renderTable(); // Re-render
+                
+                showMessage("Student updated successfully!", "success");
+                closeModal(editModal);
+                setButtonLoading(submitButton, false);
+            });
+            
+            // --- Delete Student ---
+            async function handleDelete(docId) {
+                // Simulate delete
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                students = students.filter(s => s.id !== docId);
+                renderTable(); // Re-render
+                
+                showMessage("Student deleted.", "success");
+            }
+            
+            // --- Simulated AI Analysis (Per Student) ---
+            async function handleAnalyze(e, docId) {
+                const button = e.currentTarget;
+                const icon = button.querySelector('i:first-child');
+                const spinner = button.querySelector('i:last-child');
+                
+                // Show loading state on button
+                icon.classList.add('hidden');
+                spinner.classList.remove('hidden');
+                button.disabled = true;
+
+                // Simulate AI analysis (2 seconds)
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                const disabilityTypes = ['Type A (Visual)', 'Type B (Mobility)', 'Type C (Hearing)', 'Type D (Cognitive)'];
+                const randomType = disabilityTypes[Math.floor(Math.random() * disabilityTypes.length)];
+
+                // Find and update student
+                const studentIndex = students.findIndex(s => s.id === docId);
+                if (studentIndex > -1) {
+                    students[studentIndex].disabilityType = randomType;
+                }
+                
+                renderTable(); // Re-render
+
+                showMessage(`Analysis complete. Student set to ${randomType}.`, "success");
+
+                // Button state is reset by renderTable re-creating the button,
+                // but we'll re-enable it just in case.
+                button.disabled = false;
+            }
+
+            // --- Initial Load ---
+            // Render the initial table on page load
+            renderTable();
+
+        });
+    </script>
+</body>
+</html>

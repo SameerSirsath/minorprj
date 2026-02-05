@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Chatbot for Persons with Disabilities</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --primary-dark: #1e293b;
+            --bg-light: #ffffff;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4ff;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--bg-light);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 80px auto 40px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        h2 {
+            color: #2d6cdf;
+            text-align: center;
+        }
+
+        section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input[type="file"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #2d6cdf;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 18px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #244fa3;
+        }
+
+        .result-box {
+            background: #eef3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        #chat-section {
+            background: #f9fbff;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .chat-box {
+            height: 250px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 10px;
+            background: #fff;
+        }
+
+        .user-msg {
+            color: #2d6cdf;
+            margin-bottom: 10px;
+        }
+
+        .bot-msg {
+            color: #444;
+            margin-bottom: 15px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            color: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container">
+        <a href="/" class="logo">
+            <i class="fas fa-home"></i>
+            Home
+        </a>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <span style="font-weight: 600; color: var(--primary-dark);">NGO Analysis Tool</span>
+            <div class="auth-buttons">
+                {% if user and user.user_type == 'ngo' %}
+                <a href="/ngo/dashboard" class="btn btn-secondary" style="margin-right: 10px;">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <div class="user-dropdown">
+                    <span>🏢 {{ user.fullname if user.fullname else 'NGO Manager' }}</span>
+                    <div class="dropdown-content">
+                        <a href="/profile"><i class="fas fa-user-circle"></i> Profile</a>
+                        <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="/login" class="btn btn-secondary">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div class="container">
+        <h2>AI-Powered Chatbot for Persons with Disabilities</h2>
+
+        <!-- 1️⃣ Disability Certificate Upload -->
+        <section>
+            <label>Upload Disability Certificate (PDF/Image):</label>
+            <input type="file" id="certFile" />
+            <button onclick="analyzeCertificate()">Analyze Certificate</button>
+            <div id="certResult" class="result-box" style="display:none;"></div>
+        </section>
+
+        <!-- 2️⃣ Policy PDF Upload -->
+        <section>
+            <label>Upload Government Policy / Scheme PDF:</label>
+            <input type="file" id="policyFile" />
+            <button onclick="uploadPolicy()">Upload Policy</button>
+            <div id="policyResult" class="result-box" style="display:none;"></div>
+        </section>
+
+        <!-- 3️⃣ Chatbot -->
+        <section id="chat-section">
+            <label>Ask a Question about Uploaded Policy:</label>
+            <div class="chat-box" id="chatBox"></div>
+            <input type="text" id="userQuery" placeholder="Type your question here..." />
+            <button onclick="askChatbot()">Ask</button>
+        </section>
+    </div>
+
+    <script>
+        // ---------- 1️⃣ Upload & Analyze Disability Certificate ----------
+        async function analyzeCertificate() {
+            const fileInput = document.getElementById('certFile');
+            const resultDiv = document.getElementById('certResult');
+            if (!fileInput.files[0]) {
+                alert("Please select a certificate file first!");
+                return;
+            }
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            resultDiv.style.display = "block";
+            resultDiv.innerHTML = "Analyzing... ⏳";
+
+            // This would call your backend API
+            // For now, simulate response
+            setTimeout(() => {
+                resultDiv.innerHTML = `
+                    <strong>Analysis Complete (Simulated)</strong><br>
+                    <strong>Disability Type:</strong> Visual Impairment<br>
+                    <strong>Severity:</strong> Moderate (40-70%)<br>
+                    <strong>Recommendations:</strong> Screen reader software, Braille training
+                `;
+            }, 2000);
+        }
+
+        // ---------- 2️⃣ Upload Policy Document ----------
+        async function uploadPolicy() {
+            const fileInput = document.getElementById('policyFile');
+            const resultDiv = document.getElementById('policyResult');
+            if (!fileInput.files[0]) {
+                alert("Please select a PDF policy file!");
+                return;
+            }
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            resultDiv.style.display = "block";
+            resultDiv.innerHTML = "Uploading and processing policy... ⏳";
+
+            // This would call your backend API
+            // For now, simulate response
+            setTimeout(() => {
+                resultDiv.innerHTML = `<strong>Policy uploaded successfully! You can now ask questions about it.</strong>`;
+            }, 2000);
+        }
+
+        // ---------- 3️⃣ Chatbot Interaction ----------
+        async function askChatbot() {
+            const queryInput = document.getElementById("userQuery");
+            const chatBox = document.getElementById("chatBox");
+            const query = queryInput.value.trim();
+            if (!query) return;
+
+            chatBox.innerHTML += `<div class='user-msg'><strong>You:</strong> ${query}</div>`;
+            queryInput.value = "";
+
+            // Simulate API call
+            setTimeout(() => {
+                const responses = [
+                    "Based on the RPwD Act 2016, persons with benchmark disabilities (40% and above) are eligible for 4% reservation in government jobs.",
+                    "The disability certificate must be issued by a medical board constituted by the Central or State Government.",
+                    "Age relaxation of 10 years is provided for PwD candidates in government jobs.",
+                    "Educational institutions must provide 5% reservation for persons with disabilities."
+                ];
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                chatBox.innerHTML += `<div class='bot-msg'><strong>Bot:</strong> ${randomResponse}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

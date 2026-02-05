@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWD Assistant - Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reuse styles from login page */
+        :root {
+            --primary-blue: #2563eb;
+            --primary-dark: #1e293b;
+            --bg-light: #ffffff;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+            --bg-grey: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-grey);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--bg-light);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 20px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* User Dropdown Styles */
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-dropdown > span {
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: var(--bg-light);
+            min-width: 180px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            z-index: 1001;
+            border: 1px solid var(--border-light);
+            top: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: var(--primary-dark);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--border-light);
+            color: var(--primary-blue);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* Profile Page Styles */
+        .profile-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 80px);
+            padding: 40px 0;
+            margin-top: 80px;
+        }
+
+        .profile-box {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .profile-box h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .profile-box p {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--bg-light);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary-dark);
+        }
+
+        .form-control {
+            padding: 12px 15px;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        .form-control:disabled {
+            background-color: var(--bg-grey);
+            cursor: not-allowed;
+        }
+
+        .profile-info {
+            margin-bottom: 30px;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: var(--text-muted);
+        }
+
+        .auth-message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .auth-message.error {
+            color: #b91c1c;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+        }
+
+        .auth-message.success {
+            color: #166534;
+            background: #dcfce7;
+            border: 1px solid #bbf7d0;
+        }
+
+        @media (max-width: 768px) {
+            .profile-box {
+                margin: 20px;
+            }
+            .profile-container {
+                margin-top: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/" class="logo">
+                <i class="fas fa-wheelchair-move"></i>
+                PWD Assistant
+            </a>
+            <div class="auth-buttons">
+                {% if user %}
+                <a href="/" class="btn btn-secondary" style="margin-right: 10px;">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <div class="user-dropdown">
+                    <span>👤 {{ user.fullname if user.fullname else user.username }}</span>
+                    <div class="dropdown-content">
+                        <a href="/profile"><i class="fas fa-user-circle"></i> Profile</a>
+                        {% if user.user_type == 'ngo' %}
+                        <a href="/ngo/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        {% else %}
+                        <a href="/home"><i class="fas fa-home"></i> Dashboard</a>
+                        {% endif %}
+                        <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="/" class="btn btn-secondary" style="margin-right: 10px;">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="/login" class="btn btn-secondary">Login/Signup</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main class="profile-container">
+        <div class="profile-box">
+            <div class="card">
+                <h2>User Profile</h2>
+                <p>View and update your profile information</p>
+                
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="auth-message {{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <div class="profile-info">
+                    <div class="info-item">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value">{{ user.fullname if user.fullname else 'Not set' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Username</div>
+                        <div class="info-value">{{ user.username }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">{{ user.email if user.email else 'Not set' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Account Type</div>
+                        <div class="info-value">
+                            {% if user.user_type == 'ngo' %}
+                            <span style="color: #059669; font-weight: 600;">NGO Manager</span>
+                            {% else %}
+                            <span style="color: #2563eb; font-weight: 600;">Individual User</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Member Since</div>
+                        <div class="info-value">{{ user.created_at if user.created_at else 'Recently' }}</div>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 30px; margin-bottom: 20px;">Update Profile</h3>
+                <form method="POST" action="/update_profile">
+                    <div class="form-group">
+                        <label for="fullname">Full Name</label>
+                        <input type="text" 
+                               name="fullname" 
+                               id="fullname" 
+                               class="form-control" 
+                               value="{{ user.fullname if user.fullname else '' }}"
+                               placeholder="Enter your full name"
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" 
+                               name="email" 
+                               id="email" 
+                               class="form-control" 
+                               value="{{ user.email if user.email else '' }}"
+                               placeholder="Enter your email"
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username (Cannot be changed)</label>
+                        <input type="text" 
+                               id="username" 
+                               class="form-control" 
+                               value="{{ user.username }}"
+                               disabled>
+                        <small style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">
+                            Username cannot be changed for security reasons.
+                        </small>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-save"></i> Update Profile
+                    </button>
+                </form>
+                
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-light);">
+                    <h4 style="margin-bottom: 15px;">Account Actions</h4>
+                    <div style="display: flex; gap: 10px;">
+                        {% if user.user_type == 'ngo' %}
+                        <a href="/ngo/dashboard" class="btn btn-secondary" style="flex: 1;">
+                            <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                        </a>
+                        {% else %}
+                        <a href="/home" class="btn btn-secondary" style="flex: 1;">
+                            <i class="fas fa-home"></i> Go to Dashboard
+                        </a>
+                        {% endif %}
+                        <a href="/logout" class="btn btn-secondary" style="flex: 1; background: #dc2626; border-color: #dc2626;">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Auto-hide flash messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const messages = document.querySelectorAll('.auth-message');
+            messages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transition = 'opacity 0.5s';
+                    setTimeout(() => {
+                        message.style.display = 'none';
+                    }, 500);
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>
