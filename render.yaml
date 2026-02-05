@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: pwd-assistant
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.9.0
+
+databases:
+  - name: pwd-assistant-db
+    databaseName: pwd_assistant
+    user: pwd_user
+    plan: free
